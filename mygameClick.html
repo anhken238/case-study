@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>Click-Game</title>
+    <style>
+        body {
+            background-image: url("backgroundbody.jpg");
+            background-size: 100%;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 22px;
+        }
+        
+        #myCanvas {
+            margin: auto;
+            border-radius: 8px;
+            background-image: url("background.jpg");
+            background-repeat: no-repeat;
+            background-size: 250%;
+            cursor: crosshair;
+        }
+        
+        #score {
+            /* margin-top: -508;
+            margin-left: -696px; */
+            text-align: center;
+            font-size: 40px;
+            color: rgb(76, 75, 82);
+            text-shadow: 3px 3px rgb(240, 252, 189);
+        }
+        
+        .btn {
+            margin-top: -929px;
+            border-radius: 10px;
+            color: red;
+            font-size: 30px;
+            background-color: rgb(10, 3, 109);
+        }
+        
+        #box {
+            margin-top: -500px;
+            float: right;
+            width: 407px;
+            height: 450px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 22px;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px #00a2ff;
+        }
+        
+        #quaivat1 {
+            border: 1px solid green;
+            border-radius: 10px;
+        }
+        
+        #guide {
+            margin-top: -400px;
+            margin-left: 50px;
+            color: white;
+            text-shadow: 2px 2px #00a2ff;
+            float: left;
+            width: 300px;
+        }
+    </style>
+</head>
+
+<body onload="startGame()">
+
+    <p id="box">
+        <img src="qvbox.gif" id="quaivat1" style="float:left; width:100px"><img src="qvbox.gif" id="quaivat1" style="float:left; width:100px"><img src="qvbox.gif" id="quaivat1" style="float:left; width:100px">
+        <img src="qvbox.gif" id="quaivat1" style="float:left; width:100px"><br>
+        <marquee direction="up" onmouseover="this.stop()" onmouseout="this.start()">Bắn quái vật một game thuộc thể loại Game giải trí hứa hẹn sẽ mang lại cho các bạn những trải nghiệm hết sức thú vị. Đến với game Bắn quái vật này các bạn sẽ phải thể hiện khả năng nhay tay và tinh mắt của mình để bắn chính xác lũ quái vật đang
+            bay tiến về thành phố. Game với thao tác chơi hết sức đơn giản bạn cần chỉ cần một chút tinh mắt và nhanh tay của mình là có thể hoàn thành nhiệm vụ lần này!<br /> .....
+        </marquee>
+        </be>
+    </p>
+
+    <p id="guide">
+        <marquee direction="up" onmouseover="this.stop()" onmouseout="this.start()"> <img src="pc.png">trên máy tính bạn dùng <img src="mouse.png"> để chơi, di chuyển tâm súng sao cho trúng những con quái vật đang bay và bắn. Mỗi 1 mục tiêu bị băn hạ bạn sẽ có cho mình 1 điểm hãy cố gắng dành 50 điểm để chiến thắng quái vật nhé
+            ! Bạn bè bạn tin bạn ^.^</marquee>
+    </p>
+
+    <img src="quaivat.gif" id="quaivat" class="d-none">
+    <img src="no.png" id="no" class="d-none">
+    <canvas id="myCanvas" width="360px" height="500px"></canvas>
+    <input type="button" value="New Game" class="btn btn-dark" id="btn">
+
+    <div id="score"></div>
+    <script type="text/javascript">
+        var flys = [];
+        var distance;
+        var pickFlys = [];
+        var score = 0;
+
+
+        function startGame() {
+            gameArea.start();
+            // myMusic = new Audio();
+            // myMusic.src = "uuu1.mp3";
+            // myMusic.play();
+        }
+        // flyGone quái vật bay qua thanh ngang tức là chiều cao màn hình là 500px nếu fly vẽ qua thì sẽ gọi hàm stop
+        function flyGone() {
+            for (let i = 0; i < flys.length; i++)
+                if (flys[i].y > 490) return true;
+        }
+        // sự kiện kích chuột
+        function clickHandler() {
+            x = event.clientX - gameArea.canvas.offsetLeft;
+            y = event.clientY - gameArea.canvas.offsetTop;
+            checkFly(x, y);
+            mySound = new Audio();
+            mySound.src = "fire.wav"
+            mySound.play();
+        }
+        // kiểm tra khoảng kích chuột dựa trên width, height của fly và kích trúng thì sẽ xóa 1 fly tại vị trí i
+        function checkFly() {
+            for (let i = 0; i < flys.length; i++) {
+                if (x >= flys[i].x && x <= flys[i].x + 80 && y >= flys[i].y && y <= flys[i].y + 80) {
+                    flys[i].pick = true;
+                    pickFlys.push(flys[i]);
+                    flys.splice(i, 1);
+                    mySound = new Audio();
+                    mySound.src = "notung.wav"
+                    mySound.play();
+                    // myMusic.stop();
+                    score++;
+                }
+            }
+        }
+        // tạo đối tượng gameArea gồm 2 phương thức là start và update
+        var gameArea = {
+            canvas: document.getElementById("myCanvas"),
+            start: function() {
+                this.canvas.style.border = "3px solid grey";
+                this.canvas.style.display = "block";
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                this.context = this.canvas.getContext("2d");
+                this.canvas.addEventListener("click", clickHandler, event);
+                gameArea.update();
+            },
+            update: function() {
+                gameArea.context.clearRect(0, 0, 360, 500);
+                document.getElementById("score").innerText = "50 score to win : " + score;
+                if (score == 50) {
+                    gameArea.stop(true);
+                    return;
+                }
+                if (flyGone()) {
+                    gameArea.stop(false);
+                    return;
+                }
+                if ((flys.length === 0) || flys[flys.length - 1].y >= distance) {
+                    var fly = new Fly();
+                    flys.push(fly);
+                    distance = Math.floor(Math.random() * (80 - 10) + 80)
+                }
+                for (let i = 0; i < flys.length; i++) flys[i].draw();
+                if (pickFlys.length > 0) {
+                    for (let i = 0; i < pickFlys.length; i++) pickFlys[i].draw();
+                    for (let j = 0; j < pickFlys.length; j++)
+                        if (pickFlys[j].pickCout === 12) pickFlys.splice(j, 1);
+
+                }
+                requestAnimationFrame(gameArea.update);
+
+            },
+            stop: function(win) {
+                gameArea.canvas.removeEventListener("click", clickHandler, event);
+                gameArea.context.fillStyle = "grey";
+                gameArea.context.globalAlpha = 0.5;
+                gameArea.context.fillRect(0, 0, 360, 500);
+                gameArea.context.globalAlpha = 1.0;
+                gameArea.context.fillRect(0, 200, 360, 100);
+                gameArea.context.font = "35px Comic Sans MS";
+                if (win) {
+                    gameArea.context.fillStyle = "LawnGreen";
+                    gameArea.context.fillText("You Won!!...", 70, 255);
+                    mySoundwin = new Audio();
+                    mySoundwin.src = "youwin.mp3"
+                    mySoundwin.play();
+                } else {
+                    gameArea.context.fillStyle = "red";
+                    gameArea.context.fillText(" Game over " + score, 40, 255);
+                    mySoundend = new Audio();
+                    mySoundend.src = "end.mp3"
+                    mySoundend.play();
+                }
+            }
+        }
+
+        function Fly() {
+            this.x = Math.floor(Math.random(291 - 5) * 291);
+            this.y = 0;
+            this.pick;
+            this.pickCout = 0;
+            this.draw = function() {
+                var img = document.getElementById("quaivat");
+                var img1 = document.getElementById("no");
+                if (this.pick) {
+                    this.pickCout++;
+                    gameArea.context.drawImage(img1, this.x + 25, this.y + 40, 20, 28);
+                } else {
+                    gameArea.context.drawImage(img, this.x, this.y, 80, 80);
+
+                    if (score > 25) {
+                        this.y += 3.2;
+                    } else this.y += 1.5;
+                }
+
+            }
+        }
+
+        document.getElementById("btn").onclick = function() {
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>
