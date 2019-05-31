@@ -160,7 +160,8 @@
                     flys.push(fly);
                     distance = Math.floor(Math.random() * (80 - 10) + 80)
                 }
-                for (let i = 0; i < flys.length; i++) flys[i].draw();
+                for (let i = 0; i < flys.length; i++)
+                    flys[i].draw();
                 if (pickFlys.length > 0) {
                     for (let i = 0; i < pickFlys.length; i++) pickFlys[i].draw();
                     for (let j = 0; j < pickFlys.length; j++)
@@ -207,7 +208,7 @@
                     gameArea.context.drawImage(img1, this.x + 25, this.y + 40, 20, 28);
                 } else {
                     gameArea.context.drawImage(img, this.x, this.y, 80, 80);
-
+                    console.log(this.y);
                     if (score > 25) {
                         this.y += 3.2;
                     } else this.y += 1.5;
